@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { usePointerLight, useMounted } from "@/lib/hooks";
 import { useDeck } from "@/lib/store";
+import { useUI } from "@/lib/ui";
+import { VIEWS } from "@/lib/constants";
+import type { View } from "@/lib/types";
 import { Background } from "@/components/background/Background";
 import { Overlays } from "@/components/background/Overlays";
 import { Sidebar } from "./Sidebar";
@@ -21,6 +24,12 @@ export function AppShell() {
     const t = setTimeout(() => setBooting(false), 1250);
     return () => clearTimeout(t);
   }, [mounted]);
+
+  // Deep-link a starting view via ?view=games (also powers shareable links).
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get("view");
+    if (v && VIEWS.some((x) => x.key === v)) useUI.getState().setView(v as View);
+  }, []);
 
   // Keep the <html> `dark` class in sync with the chosen theme. In "auto"
   // mode it follows the OS and live-updates when that preference changes.
