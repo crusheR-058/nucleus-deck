@@ -20,13 +20,15 @@ spring-physics motion, mouse-driven parallax and lighting, and a WebGL crystal b
 
 ## 📸 Screenshots
 
-![Home](docs/screenshots/home.png)
+![Nucleus Deck — live tour](docs/demo.gif)
 
-| 🩺 MBBS study hub | ▶ Play — markets, cricket & movies |
+| Home | 🩺 MBBS hub |
 |---|---|
-| ![MBBS](docs/screenshots/mbbs.png) | ![Play](docs/screenshots/play.png) |
-| 🎰 Casino games (1M chips) | 🗣️ Voice AI assistant |
-| ![Games](docs/screenshots/games.png) | ![Assistant](docs/screenshots/assistant.png) |
+| ![Home](docs/screenshots/home.png) | ![MBBS](docs/screenshots/mbbs.png) |
+| ▶ Play — markets, cricket & movies | 🎰 Casino (1,000,000 chips) |
+| ![Play](docs/screenshots/play.png) | ![Games](docs/screenshots/games.png) |
+| 🗣️ Voice AI assistant + Daily Briefing | |
+| ![Assistant](docs/screenshots/assistant.png) | |
 
 ---
 
