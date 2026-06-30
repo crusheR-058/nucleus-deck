@@ -15,6 +15,7 @@ spring-physics motion, mouse-driven parallax and lighting, and a WebGL crystal b
 ![Three.js](https://img.shields.io/badge/React_Three_Fiber-8-black?logo=threedotjs&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-EF2D5E?logo=framer&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e.svg)](LICENSE)
+[![CI](https://github.com/crusheR-058/nucleus-deck/actions/workflows/ci.yml/badge.svg)](https://github.com/crusheR-058/nucleus-deck/actions/workflows/ci.yml)
 
 ---
 
