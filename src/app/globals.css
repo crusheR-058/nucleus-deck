@@ -1,0 +1,512 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   NUCLEUS DECK — Liquid Glass Design System (monochrome)
+   ============================================================ */
+
+:root {
+  /* Monochrome ink scale */
+  --ink-950: #050506;
+  --ink-900: #0b0b0e;
+  --ink: #09090b;
+  --charcoal: #18181b;
+  --charcoal-light: #222226;
+  --graphite: #3f3f46;
+  --steel: #71717a;
+  --silver: #a1a1aa;
+  --mist: #d4d4d8;
+  --frost: #ececef;
+  --white: #ffffff;
+
+  /* Liquid-glass material tokens (light vibrancy over a bright silver field).
+     Frosted panels read as soft milky glass; text on them is dark ink. */
+  --glass-fill: 255, 255, 255;
+  --glass-bg: rgba(var(--glass-fill), 0.64);
+  --glass-bg-2: rgba(var(--glass-fill), 0.46);
+  --glass-bg-weak: rgba(var(--glass-fill), 0.2);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-border-soft: rgba(255, 255, 255, 0.28);
+  --glass-blur: 40px;
+
+  /* Emphasis (charcoal) glass */
+  --charcoal-bg: rgba(15, 15, 18, 0.82);
+  --charcoal-border: rgba(255, 255, 255, 0.12);
+
+  /* Text on frosted (light) cards */
+  --text-strong: #0b0b0e;
+  --text-body: #1f1f23;
+  --text-muted: #52525b;
+  --text-faint: #71717a;
+
+  /* Text on charcoal cards */
+  --text-on-dark: #f4f4f5;
+  --text-on-dark-muted: #a1a1aa;
+
+  /* Ambient lighting driven by the cursor (updated via JS) */
+  --cursor-x: 50%;
+  --cursor-y: 38%;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+
+  --radius-card: 32px;
+
+  /* Theme-driven surfaces (overridden in .dark) */
+  --page-bg: #c7ccd6;
+  --bg-field: radial-gradient(125% 120% at 16% 8%, #ffffff 0%, #f1f3f7 20%, #dde1e9 46%, #c6cbd6 70%, #b4bac7 100%);
+  --bg-glow: 1;
+  --boot-bg: radial-gradient(120% 120% at 50% 40%, #f4f5f8 0%, #d9dce3 55%, #b9bec9 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: "Satoshi", "General Sans", "SF Pro Display", system-ui, sans-serif;
+  color: var(--text-body);
+  background: var(--page-bg); /* fallback before the WebGL crystal mounts */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow: hidden; /* the deck is a fixed canvas; panels scroll internally */
+  letter-spacing: -0.01em;
+}
+
+/* ---- Typography rhythm ---- */
+.font-display {
+  font-family: "General Sans", "Satoshi", "SF Pro Display", system-ui, sans-serif;
+}
+h1, h2, h3 {
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ============================================================
+   GLASS SURFACES
+   ============================================================ */
+
+/* Default frosted-glass card */
+.glass {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    var(--glass-bg) 0%,
+    var(--glass-bg-2) 100%
+  );
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-border-soft);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 24px 70px -28px rgba(8, 8, 12, 0.5),
+    0 8px 24px -16px rgba(8, 8, 12, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -24px 44px -36px rgba(8, 8, 12, 0.22);
+  color: var(--text-body);
+}
+
+/* Specular top edge + soft moving sheen built into every glass panel */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.1) 30%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* A faint dynamic glow that follows the cursor across the whole panel */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    140% 120% at var(--cursor-x) var(--cursor-y),
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0) 45%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.glass:hover::after {
+  opacity: 0.7;
+}
+
+/* Charcoal emphasis card — solid near-black, white text (AI / analytics) */
+.glass-charcoal {
+  position: relative;
+  background:
+    radial-gradient(120% 140% at 12% 0%, rgba(255, 255, 255, 0.07), transparent 42%),
+    linear-gradient(160deg, #1a1a1e 0%, #101013 60%, #0a0a0c 100%);
+  backdrop-filter: blur(28px) saturate(120%);
+  -webkit-backdrop-filter: blur(28px) saturate(120%);
+  border: 1px solid var(--charcoal-border);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 36px 100px -34px rgba(0, 0, 0, 0.75),
+    0 0 26px -12px rgba(255, 255, 255, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.14),
+    inset 0 -40px 60px -50px rgba(0, 0, 0, 0.6);
+  color: var(--text-on-dark);
+}
+.glass-charcoal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    120% 120% at var(--cursor-x) var(--cursor-y),
+    rgba(255, 255, 255, 0.1),
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+.glass-charcoal:hover::after {
+  opacity: 1;
+}
+
+/* Small frosted pill / chip */
+.glass-pill {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.32));
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px -16px rgba(8, 8, 12, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.glass-pill-dark {
+  background: linear-gradient(160deg, rgba(26, 26, 30, 0.9), rgba(12, 12, 14, 0.92));
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 50px -22px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================================
+   LIQUID ACRYLIC BUTTON
+   ============================================================ */
+.liquid-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+  box-shadow: 0 12px 30px -14px rgba(8, 8, 12, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.85);
+  color: var(--text-strong);
+  transition:
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.45s ease,
+    background 0.45s ease;
+  cursor: pointer;
+}
+.liquid-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.85),
+    transparent
+  );
+  transform: translateX(-150%) skewX(-18deg);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+.liquid-btn:hover {
+  transform: translateY(-2px) scale(1.025);
+  box-shadow: 0 20px 44px -16px rgba(8, 8, 12, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    0 0 22px -6px rgba(255, 255, 255, 0.6);
+}
+.liquid-btn:hover::before {
+  transform: translateX(260%) skewX(-18deg);
+}
+.liquid-btn:active {
+  transform: translateY(0) scale(0.96);
+  transition-duration: 0.12s;
+}
+.liquid-btn-dark {
+  background: linear-gradient(135deg, #26262b, #121215);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--text-on-dark);
+  box-shadow: 0 16px 36px -16px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.14);
+}
+
+/* ============================================================
+   AMBIENT OVERLAYS
+   ============================================================ */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 8s steps(6) infinite;
+}
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-4%, 3%); }
+  40% { transform: translate(3%, -5%); }
+  60% { transform: translate(-3%, 4%); }
+  80% { transform: translate(4%, -2%); }
+  100% { transform: translate(0, 0); }
+}
+
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 55;
+  background: radial-gradient(125% 125% at 50% 35%, transparent 55%, rgba(8, 8, 14, 0.32) 100%);
+}
+
+/* Cursor spotlight — a soft luminous reflection that tracks the pointer */
+.cursor-spotlight {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  background: radial-gradient(
+    340px 340px at var(--cursor-x) var(--cursor-y),
+    rgba(255, 255, 255, 0.16),
+    transparent 70%
+  );
+  mix-blend-mode: soft-light;
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.text-strong { color: var(--text-strong); }
+.text-body { color: var(--text-body); }
+.text-muted { color: var(--text-muted); }
+.text-faint { color: var(--text-faint); }
+.on-dark { color: var(--text-on-dark); }
+.on-dark-muted { color: var(--text-on-dark-muted); }
+
+.label-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.66rem;
+  font-weight: 500;
+  color: var(--text-faint);
+}
+.glass-charcoal .label-eyebrow { color: var(--text-on-dark-muted); }
+
+/* preserve-3d helpers for depth */
+.preserve-3d { transform-style: preserve-3d; }
+.perspective-1200 { perspective: 1200px; }
+.perspective-2000 { perspective: 2000px; }
+
+/* thin custom scrollbar inside panels */
+.scroll-area {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 120, 130, 0.45) transparent;
+}
+.scroll-area::-webkit-scrollbar { width: 7px; height: 7px; }
+.scroll-area::-webkit-scrollbar-track { background: transparent; }
+.scroll-area::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 130, 0.4);
+  border-radius: 9999px;
+}
+.scroll-area::-webkit-scrollbar-thumb:hover { background: rgba(120, 120, 130, 0.65); }
+.glass-charcoal .scroll-area { scrollbar-color: rgba(200, 200, 210, 0.35) transparent; }
+
+::selection {
+  background: rgba(20, 20, 24, 0.9);
+  color: #fff;
+}
+
+/* shimmer skeleton */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.28);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: shimmer 1.6s infinite;
+}
+
+/* focus ring — accessible, on-style */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(8, 8, 14, 0.55), 0 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+/* ============================================================
+   REDUCED MOTION — gracefully disable parallax / heavy motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.08s !important;
+    scroll-behavior: auto !important;
+  }
+  .grain-overlay { animation: none; }
+}
+
+/* ============================================================
+   DARK MODE
+   The whole deck is monochrome, so dark mode re-tints the glass
+   material + text tokens and dims the bright ambient field. Most
+   surfaces inherit automatically through the CSS variables below;
+   the remaining rules retune the hardcoded utility colors used by
+   small controls so they read correctly on dark glass.
+   ============================================================ */
+.dark {
+  /* Frosted glass becomes smoked charcoal glass */
+  --glass-fill: 30, 31, 36;
+  --glass-bg: rgba(var(--glass-fill), 0.55);
+  --glass-bg-2: rgba(var(--glass-fill), 0.38);
+  --glass-bg-weak: rgba(var(--glass-fill), 0.22);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-border-soft: rgba(255, 255, 255, 0.1);
+
+  --charcoal-bg: rgba(10, 10, 12, 0.86);
+  --charcoal-border: rgba(255, 255, 255, 0.1);
+
+  /* Text inverts to light */
+  --text-strong: #f4f4f6;
+  --text-body: #e6e6ea;
+  --text-muted: #a8a8b2;
+  --text-faint: #7c7c87;
+
+  /* Ambient field + page */
+  --page-bg: #06070a;
+  --bg-field: radial-gradient(125% 120% at 16% 8%, #1b1e26 0%, #14161c 24%, #0e1015 50%, #0a0b0f 74%, #070809 100%);
+  --bg-glow: 0.5;
+  --boot-bg: radial-gradient(120% 120% at 50% 40%, #15171d 0%, #0c0d11 60%, #070809 100%);
+}
+
+/* Glass card top-edge highlight reads softer on dark */
+.dark .glass {
+  box-shadow:
+    0 24px 70px -28px rgba(0, 0, 0, 0.7),
+    0 8px 24px -16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.14),
+    inset 0 -24px 44px -36px rgba(0, 0, 0, 0.4);
+}
+.dark .glass::before { opacity: 0.4; }
+
+/* Light frosted pill + acrylic button → dark translucent variants */
+.dark .glass-pill {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px -16px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+.dark .liquid-btn {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--text-strong);
+  box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+.dark .liquid-btn::before {
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+}
+
+/* Selection / skeleton / focus ring retuned for dark */
+.dark ::selection { background: rgba(244, 244, 246, 0.92); color: #09090b; }
+.dark .skeleton { background: rgba(255, 255, 255, 0.06); }
+.dark .skeleton::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+}
+.dark .focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7), 0 0 0 5px rgba(8, 8, 14, 0.6);
+}
+
+/* ---- Hardcoded utility colors used by small controls ---- */
+
+/* "ink" text (near-black) → light. Solid bg-ink accent fills stay dark on
+   purpose: their white text/icons remain perfectly legible. */
+.dark .text-ink { color: var(--text-strong); }
+.dark .text-ink\/70 { color: rgba(236, 236, 239, 0.72); }
+.dark .text-ink\/25 { color: rgba(236, 236, 239, 0.3); }
+.dark .hover\:text-ink:hover { color: var(--text-strong); }
+.dark .group:hover .group-hover\:text-ink { color: var(--text-strong); }
+
+/* "ink" borders → faint light borders so edges stay visible */
+.dark .border-ink,
+.dark .border-ink\/30 { border-color: rgba(255, 255, 255, 0.22); }
+.dark .border-ink\/20 { border-color: rgba(255, 255, 255, 0.16); }
+.dark .border-ink\/15 { border-color: rgba(255, 255, 255, 0.13); }
+.dark .border-ink\/12 { border-color: rgba(255, 255, 255, 0.11); }
+.dark .border-ink\/10 { border-color: rgba(255, 255, 255, 0.1); }
+
+/* Faint dark ink tints (hover/selected washes) → faint light tints */
+.dark .bg-ink\/8 { background-color: rgba(255, 255, 255, 0.06); }
+.dark .bg-ink\/10 { background-color: rgba(255, 255, 255, 0.07); }
+.dark .bg-ink\/12 { background-color: rgba(255, 255, 255, 0.08); }
+
+/* Water tracker "filled" cup: invert so it reads against dark glass */
+.dark .bg-ink\/85 { background-color: rgba(244, 244, 246, 0.9); }
+.dark .bg-ink\/85.text-white { color: #09090b; }
+
+/* Bright translucent-white control fills (on light cards) → subtle frost.
+   Low-alpha whites (≤/20) already target dark surfaces and are left alone. */
+.dark .bg-white\/30,
+.dark .bg-white\/35,
+.dark .bg-white\/40,
+.dark .bg-white\/45,
+.dark .bg-white\/50,
+.dark .bg-white\/55,
+.dark .bg-white\/60,
+.dark .bg-white\/65 { background-color: rgba(255, 255, 255, 0.07); }
+
+.dark .hover\:bg-white\/60:hover,
+.dark .hover\:bg-white\/70:hover,
+.dark .hover\:bg-white\/75:hover,
+.dark .hover\:bg-white\/80:hover { background-color: rgba(255, 255, 255, 0.14); }
+
+.dark .border-white\/30,
+.dark .border-white\/40,
+.dark .border-white\/45,
+.dark .border-white\/50,
+.dark .border-white\/60,
+.dark .border-white\/80 { border-color: rgba(255, 255, 255, 0.12); }
+
+.dark .ring-white\/40 { --tw-ring-color: rgba(255, 255, 255, 0.25); }
