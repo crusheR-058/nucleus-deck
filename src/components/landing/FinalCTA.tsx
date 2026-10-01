@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { NucleusMark } from "@/components/ui/NucleusMark";
 import { Icon } from "@/components/ui/Icon";
 import { usePrefersReducedMotion } from "@/lib/hooks";
+import { playHoverTick, playEnterDeckChime } from "@/lib/sound";
 
 export function FinalCTA() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export function FinalCTA() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       if (e.key === "d" || e.key === "D") {
+        playEnterDeckChime();
         router.push("/deck");
       }
     };
@@ -53,6 +55,8 @@ export function FinalCTA() {
         <div className="mt-8 flex flex-col items-center gap-3">
           <Link
             href="/deck"
+            onMouseEnter={playHoverTick}
+            onClick={playEnterDeckChime}
             className="liquid-btn group flex items-center gap-3 rounded-full border border-white/40 bg-white/15 px-9 py-4 text-sm font-semibold tracking-wider text-white shadow-[0_0_40px_rgba(255,255,255,0.25)] backdrop-blur-2xl transition hover:scale-105 hover:border-white/80 hover:bg-white/25 active:scale-95"
           >
             <span>ENTER THE DECK</span>

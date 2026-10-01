@@ -17,6 +17,7 @@ import { KnowledgeScene } from "./KnowledgeScene";
 import { CompleteSystemScene } from "./CompleteSystemScene";
 import { FinalCTA } from "./FinalCTA";
 import { NucleusMark } from "@/components/ui/NucleusMark";
+import { SpatialCursor } from "@/components/ui/SpatialCursor";
 
 export function LandingPage() {
   usePointerLight();
@@ -34,6 +35,9 @@ export function LandingPage() {
 
   return (
     <div className="relative min-h-screen bg-[#050506] text-white selection:bg-white selection:text-black">
+      {/* Dynamic Spatial Ring Cursor */}
+      <SpatialCursor />
+
       {/* Lenis Smooth Scroll Engine */}
       <SmoothScroll>
         {/* Background Spatial Atmosphere & Dust Particles */}

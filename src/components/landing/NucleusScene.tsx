@@ -6,6 +6,7 @@ import { SYSTEM_NODES, type SystemNode } from "./types";
 import { NucleusMark } from "@/components/ui/NucleusMark";
 import { Icon } from "@/components/ui/Icon";
 import { usePrefersReducedMotion } from "@/lib/hooks";
+import { playHoverTick, playGlassClick } from "@/lib/sound";
 
 export function NucleusScene() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -195,7 +196,10 @@ function FloatingNodeItem({
         translateY: "-50%",
       }}
       className="absolute cursor-pointer transition-transform duration-300"
-      onPointerEnter={() => onHover(true)}
+      onPointerEnter={() => {
+        playHoverTick();
+        onHover(true);
+      }}
       onPointerLeave={() => onHover(false)}
       whileHover={{ scale: 1.08, zIndex: 30 }}
     >

@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Icon } from "@/components/ui/Icon";
 import { NucleusMark } from "@/components/ui/NucleusMark";
 import { usePrefersReducedMotion, useMounted } from "@/lib/hooks";
+import { playHoverTick, playGlassClick, playEnterDeckChime } from "@/lib/sound";
 
 const NucleusAtom = dynamic(() => import("@/components/ui/NucleusAtom").then((m) => m.NucleusAtom), {
   ssr: false,
@@ -17,6 +18,7 @@ export function HeroScene() {
   const mounted = useMounted();
 
   const scrollToNext = () => {
+    playGlassClick();
     const el = document.getElementById("scene-nucleus");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
@@ -101,6 +103,8 @@ export function HeroScene() {
       >
         <Link
           href="/deck"
+          onMouseEnter={playHoverTick}
+          onClick={playEnterDeckChime}
           className="liquid-btn group flex items-center justify-center gap-3 rounded-full border border-white/40 bg-white/15 px-8 py-3.5 text-sm font-semibold tracking-wide text-white shadow-[0_0_35px_-5px_rgba(255,255,255,0.3)] backdrop-blur-2xl transition-all duration-300 hover:scale-[1.03] hover:border-white/80 hover:bg-white/25 active:scale-95"
         >
           <span>ENTER THE DECK</span>
@@ -109,6 +113,7 @@ export function HeroScene() {
 
         <button
           type="button"
+          onMouseEnter={playHoverTick}
           onClick={scrollToNext}
           className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-6 py-3.5 text-sm font-medium text-zinc-300 backdrop-blur-md transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] hover:text-white"
         >
