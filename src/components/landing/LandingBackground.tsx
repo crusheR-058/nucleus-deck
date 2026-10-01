@@ -19,7 +19,7 @@ export function LandingBackground() {
     let width = 0;
     let height = 0;
 
-    const PARTICLE_COUNT = 90;
+    const PARTICLE_COUNT = 35;
     const particles: {
       x: number;
       y: number;
@@ -36,12 +36,10 @@ export function LandingBackground() {
       if (!canvas) return;
       width = window.innerWidth;
       height = window.innerHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
+      canvas.width = width;
+      canvas.height = height;
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
-      ctx?.scale(dpr, dpr);
     }
 
     resize();
@@ -64,6 +62,11 @@ export function LandingBackground() {
 
     let t = 0;
     function render() {
+      if (document.hidden) {
+        animId = requestAnimationFrame(render);
+        return;
+      }
+
       if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
 
@@ -79,7 +82,7 @@ export function LandingBackground() {
 
         const currentAlpha = p.baseAlpha * (0.7 + 0.3 * Math.sin(t * p.pulseSpeed * 60 + p.pulsePhase));
 
-        ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha.toFixed(3)})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha.toFixed(2)})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size * p.z, 0, Math.PI * 2);
         ctx.fill();
@@ -103,21 +106,21 @@ export function LandingBackground() {
         className="absolute inset-0 transition-opacity duration-1000"
         style={{
           background:
-            "radial-gradient(900px 700px at var(--cursor-x, 50%) var(--cursor-y, 35%), rgba(255, 255, 255, 0.04), transparent 60%)",
+            "radial-gradient(900px 700px at var(--cursor-x, 50%) var(--cursor-y, 35%), rgba(255, 255, 255, 0.035), transparent 60%)",
         }}
       />
 
-      {/* Deep spatial volumetric glows */}
+      {/* Deep spatial volumetric glows — pre-feathered radial gradients with zero blur cost */}
       <div
-        className="absolute -top-[20%] left-1/2 h-[75vw] w-[75vw] -translate-x-1/2 rounded-full opacity-30 blur-[140px]"
+        className="absolute -top-[15%] left-1/2 h-[75vw] w-[75vw] -translate-x-1/2 rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(120, 125, 145, 0.03) 45%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(140, 145, 165, 0.02) 30%, transparent 65%)",
         }}
       />
       <div
-        className="absolute top-[60%] -left-[10%] h-[50vw] w-[50vw] rounded-full opacity-25 blur-[120px]"
+        className="absolute top-[55%] -left-[10%] h-[50vw] w-[50vw] rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 65%)",
+          background: "radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(100, 105, 120, 0.015) 30%, transparent 60%)",
         }}
       />
 

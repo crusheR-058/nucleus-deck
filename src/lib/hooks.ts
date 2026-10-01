@@ -20,27 +20,61 @@ function startLoop(reduced: () => boolean) {
   loopStarted = true;
 
   const root = document.documentElement;
+  let lastPx = -1;
+  let lastPy = -1;
+  let lastSx = -1;
+  let lastSy = -1;
+
   const tick = () => {
-    const ease = reduced() ? 1 : 0.085;
-    pointer.sx = lerp(pointer.sx, pointer.x, ease);
-    pointer.sy = lerp(pointer.sy, pointer.y, ease);
+    if (document.hidden) {
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    const delta = Math.max(
+      Math.abs(pointer.x - pointer.sx),
+      Math.abs(pointer.y - pointer.sy)
+    );
+
     const targetPx = (pointer.x + 1) / 2;
     const targetPy = (pointer.y + 1) / 2;
-    pointer.px = lerp(pointer.px, targetPx, ease);
-    pointer.py = lerp(pointer.py, targetPy, ease);
 
-    // Drive every glass effect + parallax purely through CSS custom properties.
-    root.style.setProperty("--mx", pointer.sx.toFixed(4));
-    root.style.setProperty("--my", pointer.sy.toFixed(4));
-    root.style.setProperty("--cursor-x", `${(pointer.px * 100).toFixed(2)}%`);
-    root.style.setProperty("--cursor-y", `${(pointer.py * 100).toFixed(2)}%`);
-    if (!reduced()) {
-      root.style.setProperty("--tilt-x", `${(-pointer.sy * 1.6).toFixed(3)}deg`);
-      root.style.setProperty("--tilt-y", `${(pointer.sx * 1.6).toFixed(3)}deg`);
+    if (delta < 0.004) {
+      pointer.sx = pointer.x;
+      pointer.sy = pointer.y;
+      pointer.px = targetPx;
+      pointer.py = targetPy;
     } else {
-      root.style.setProperty("--tilt-x", "0deg");
-      root.style.setProperty("--tilt-y", "0deg");
+      const ease = reduced() ? 1 : 0.085;
+      pointer.sx = lerp(pointer.sx, pointer.x, ease);
+      pointer.sy = lerp(pointer.sy, pointer.y, ease);
+      pointer.px = lerp(pointer.px, targetPx, ease);
+      pointer.py = lerp(pointer.py, targetPy, ease);
     }
+
+    // Only touch DOM / CSS custom properties if values meaningfully changed
+    if (
+      Math.abs(pointer.px - lastPx) > 0.003 ||
+      Math.abs(pointer.py - lastPy) > 0.003 ||
+      Math.abs(pointer.sx - lastSx) > 0.003 ||
+      Math.abs(pointer.sy - lastSy) > 0.003
+    ) {
+      lastPx = pointer.px;
+      lastPy = pointer.py;
+      lastSx = pointer.sx;
+      lastSy = pointer.sy;
+
+      root.style.setProperty("--mx", pointer.sx.toFixed(3));
+      root.style.setProperty("--my", pointer.sy.toFixed(3));
+      root.style.setProperty("--cursor-x", `${(pointer.px * 100).toFixed(1)}%`);
+      root.style.setProperty("--cursor-y", `${(pointer.py * 100).toFixed(1)}%`);
+
+      if (!reduced()) {
+        root.style.setProperty("--tilt-x", `${(-pointer.sy * 1.5).toFixed(2)}deg`);
+        root.style.setProperty("--tilt-y", `${(pointer.sx * 1.5).toFixed(2)}deg`);
+      }
+    }
+
     requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);

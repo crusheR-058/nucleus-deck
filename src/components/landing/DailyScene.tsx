@@ -418,8 +418,9 @@ function SpatialCarouselCard({
         opacity: reduced ? (index === 0 ? 1 : 0) : opacity,
         zIndex,
         transformStyle: "preserve-3d",
+        willChange: "transform, opacity",
       }}
-      className="glass-charcoal bg-[#0c0c10]/95 overflow-hidden rounded-[28px] border border-white/20 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-3xl"
+      className="glass-charcoal bg-[#0c0c10]/95 overflow-hidden rounded-[28px] border border-white/20 shadow-[0_30px_90px_rgba(0,0,0,0.95)] backdrop-blur-md"
     >
       {/* Internal top specular highlight */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />

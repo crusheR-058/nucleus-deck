@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { DoubleSide, MathUtils, type Group, type Mesh, type MeshStandardMaterial } from "three";
 
 // Three electron orbit planes (Euler tilts) shared by the rings + electrons.
@@ -66,28 +66,47 @@ function Atom({ hovered, reduced }: { hovered: boolean; reduced: boolean }) {
 
 export function NucleusAtom({ reduced }: { reduced: boolean }) {
   const [hovered, setHovered] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <Canvas
-      camera={{ position: [0, 0, 4.2], fov: 42 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-      style={{ width: "100%", height: "100%", cursor: "grab" }}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-    >
-      <ambientLight intensity={0.8} />
-      <directionalLight position={[3, 4, 5]} intensity={1.3} color="#ffffff" />
-      <directionalLight position={[-4, -2, 1]} intensity={0.5} color="#dfe3ec" />
-      <pointLight position={[0, 0, 0]} intensity={0.9} color="#ffffff" />
-      <Atom hovered={hovered} reduced={reduced} />
-      <OrbitControls
-        enableZoom={false}
-        enablePan={false}
-        enableRotate={!reduced}
-        autoRotate={!reduced}
-        autoRotateSpeed={hovered ? 3.4 : 1.1}
-        rotateSpeed={0.6}
-      />
-    </Canvas>
+    <div ref={containerRef} className="h-full w-full">
+      <Canvas
+        frameloop={inView ? "always" : "never"}
+        camera={{ position: [0, 0, 4.2], fov: 42 }}
+        dpr={[1, 1.5]}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        style={{ width: "100%", height: "100%", cursor: "grab" }}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[3, 4, 5]} intensity={1.3} color="#ffffff" />
+        <directionalLight position={[-4, -2, 1]} intensity={0.5} color="#dfe3ec" />
+        <pointLight position={[0, 0, 0]} intensity={0.9} color="#ffffff" />
+        <Atom hovered={hovered} reduced={reduced} />
+        <OrbitControls
+          enableZoom={false}
+          enablePan={false}
+          enableRotate={!reduced}
+          autoRotate={!reduced}
+          autoRotateSpeed={hovered ? 3.4 : 1.1}
+          rotateSpeed={0.6}
+        />
+      </Canvas>
+    </div>
   );
 }

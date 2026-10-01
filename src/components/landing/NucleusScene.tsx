@@ -194,6 +194,7 @@ function FloatingNodeItem({
         y,
         translateX: "-50%",
         translateY: "-50%",
+        willChange: "transform",
       }}
       className="absolute cursor-pointer transition-transform duration-300"
       onPointerEnter={() => {

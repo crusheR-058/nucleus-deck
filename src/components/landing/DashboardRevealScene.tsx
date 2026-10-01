@@ -51,8 +51,9 @@ export function DashboardRevealScene() {
               z: reduced ? 0 : z,
               opacity,
               transformStyle: "preserve-3d",
+              willChange: "transform, opacity",
             }}
-            className="group relative overflow-hidden rounded-[28px] border border-white/25 bg-[#0a0a0d]/90 p-4 shadow-[0_40px_140px_-30px_rgba(0,0,0,0.9),0_0_80px_rgba(255,255,255,0.06)] backdrop-blur-3xl transition-shadow duration-500 hover:shadow-[0_50px_160px_-20px_rgba(255,255,255,0.12)] sm:p-6"
+            className="group relative overflow-hidden rounded-[28px] border border-white/25 bg-[#0a0a0d]/92 p-4 shadow-[0_40px_140px_-30px_rgba(0,0,0,0.9),0_0_80px_rgba(255,255,255,0.06)] backdrop-blur-md transition-shadow duration-500 hover:shadow-[0_50px_160px_-20px_rgba(255,255,255,0.12)] sm:p-6"
           >
             {/* Top edge liquid specular highlight */}
             <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />

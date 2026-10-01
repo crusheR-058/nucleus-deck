@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { usePrefersReducedMotion } from "@/lib/hooks";
 
 export function SpatialCursor() {
   const cursorRef = useRef<HTMLDivElement | null>(null);
   const dotRef = useRef<HTMLDivElement | null>(null);
   const reduced = usePrefersReducedMotion();
-  const [visible, setVisible] = useState(false);
-  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
     // Only run on non-touch devices with fine pointers
@@ -16,42 +14,75 @@ export function SpatialCursor() {
       return;
     }
 
+    const cursor = cursorRef.current;
+    const dot = dotRef.current;
+    if (!cursor || !dot) return;
+
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let currentX = mouseX;
     let currentY = mouseY;
     let animId: number;
+    let isHovered = false;
+    let lastTarget: EventTarget | null = null;
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      if (!visible) setVisible(true);
+      cursor.style.opacity = "1";
+      dot.style.opacity = "1";
 
-      // Check if hovering over clickable or interactive element
-      const target = e.target as HTMLElement | null;
-      if (target) {
-        const isInteractive = !!target.closest("button, a, [role='button'], input, textarea, select, .liquid-btn, .glass-pill, [data-interactive]");
-        setHovered(isInteractive);
+      // Throttle target checking to when target actually changes
+      if (e.target !== lastTarget) {
+        lastTarget = e.target;
+        const target = e.target as HTMLElement | null;
+        const hoveredNow = !!target?.closest?.("button, a, [role='button'], input, textarea, select, .liquid-btn, .glass-pill, [data-interactive]");
+        if (hoveredNow !== isHovered) {
+          isHovered = hoveredNow;
+          if (isHovered) {
+            cursor.classList.add("cursor-hover-active");
+            dot.classList.add("dot-hover-active");
+          } else {
+            cursor.classList.remove("cursor-hover-active");
+            dot.classList.remove("dot-hover-active");
+          }
+        }
       }
     };
 
-    const onMouseLeave = () => setVisible(false);
-    const onMouseEnter = () => setVisible(true);
+    const onMouseLeave = () => {
+      cursor.style.opacity = "0";
+      dot.style.opacity = "0";
+    };
+
+    const onMouseEnter = () => {
+      cursor.style.opacity = "1";
+      dot.style.opacity = "1";
+    };
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     document.addEventListener("mouseleave", onMouseLeave);
     document.addEventListener("mouseenter", onMouseEnter);
 
+    let lastRenderedX = -1;
+    let lastRenderedY = -1;
+
     const tick = () => {
-      const ease = reduced ? 1 : 0.16;
+      if (document.hidden) {
+        animId = requestAnimationFrame(tick);
+        return;
+      }
+
+      const ease = reduced ? 1 : 0.22;
       currentX += (mouseX - currentX) * ease;
       currentY += (mouseY - currentY) * ease;
 
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
-      }
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      const diff = Math.abs(currentX - lastRenderedX) + Math.abs(currentY - lastRenderedY);
+      if (diff > 0.1) {
+        lastRenderedX = currentX;
+        lastRenderedY = currentY;
+        cursor.style.transform = `translate3d(${currentX.toFixed(1)}px, ${currentY.toFixed(1)}px, 0) translate(-50%, -50%)`;
+        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
       }
 
       animId = requestAnimationFrame(tick);
@@ -65,28 +96,51 @@ export function SpatialCursor() {
       document.removeEventListener("mouseleave", onMouseLeave);
       document.removeEventListener("mouseenter", onMouseEnter);
     };
-  }, [reduced, visible]);
-
-  if (!visible) return null;
+  }, [reduced]);
 
   return (
     <>
+      <style jsx global>{`
+        .spatial-cursor {
+          width: 20px;
+          height: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.35);
+          background: transparent;
+          transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                      height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                      border-color 0.25s ease,
+                      background-color 0.25s ease;
+          will-change: transform;
+        }
+        .spatial-cursor.cursor-hover-active {
+          width: 44px;
+          height: 44px;
+          border-color: rgba(255, 255, 255, 0.65);
+          background-color: rgba(255, 255, 255, 0.06);
+          box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+        .spatial-dot {
+          width: 4px;
+          height: 4px;
+          will-change: transform;
+        }
+        .spatial-dot.dot-hover-active {
+          box-shadow: 0 0 6px #ffffff;
+        }
+      `}</style>
+
       {/* Outer lagging halo ring */}
       <div
         ref={cursorRef}
-        className={`pointer-events-none fixed left-0 top-0 z-[9999] rounded-full transition-[width,height,border-color,background-color] duration-300 ease-out ${
-          hovered
-            ? "h-11 w-11 border border-white/60 bg-white/[0.06] shadow-[0_0_15px_rgba(255,255,255,0.2)] backdrop-blur-[1px]"
-            : "h-5 w-5 border border-white/35 bg-transparent"
-        }`}
+        aria-hidden="true"
+        className="spatial-cursor pointer-events-none fixed left-0 top-0 z-[9999] rounded-full opacity-0"
       />
 
       {/* Center pinpoint */}
       <div
         ref={dotRef}
-        className={`pointer-events-none fixed left-0 top-0 z-[9999] rounded-full bg-white transition-opacity duration-200 ${
-          hovered ? "h-1.5 w-1.5 opacity-90 shadow-[0_0_6px_#ffffff]" : "h-1 w-1 opacity-60"
-        }`}
+        aria-hidden="true"
+        className="spatial-dot pointer-events-none fixed left-0 top-0 z-[9999] rounded-full bg-white opacity-0"
       />
     </>
   );
