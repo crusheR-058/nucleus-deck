@@ -48,7 +48,7 @@ export function AppShell() {
   }, [theme]);
 
   return (
-    <div className="relative min-h-dvh">
+    <div className="fixed inset-0 overflow-hidden">
       <Background />
 
       {/* Chrome + workspace mount only on the client to avoid hydrating

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useClock } from "@/lib/hooks";
 import { useDeck } from "@/lib/store";
@@ -27,13 +28,17 @@ export function TopBar() {
     >
       {/* Branding + greeting */}
       <div className="flex items-center gap-3">
-        <div className="glass-pill flex items-center gap-3 rounded-full py-2.5 pl-3 pr-5">
+        <Link
+          href="/"
+          title="Return to Overview / Landing Page"
+          className="glass-pill flex items-center gap-3 rounded-full py-2.5 pl-3 pr-5 transition hover:scale-[1.02] hover:border-white/40 active:scale-98"
+        >
           <NucleusMark size={32} />
           <div className="leading-tight">
             <div className="font-display text-[17px] font-semibold tracking-tight text-strong">Nucleus Deck</div>
             <div className="text-[12px] text-muted">{clock.greeting}</div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Clock + weather */}
