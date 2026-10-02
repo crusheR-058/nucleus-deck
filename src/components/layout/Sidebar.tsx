@@ -18,8 +18,8 @@ export function Sidebar() {
   const focusMode = useDeck((s) => s.settings.focusMode);
   const updateSettings = useDeck((s) => s.updateSettings);
 
-  // In focus mode only the MBBS hub + Assistant exist — if we're anywhere
-  // else (e.g. after a reload that restores "home"), bounce to the MBBS hub.
+  // In focus mode only the DevHub + Assistant exist — if we're anywhere
+  // else (e.g. after a reload that restores "home"), bounce to the DevHub.
   useEffect(() => {
     if (focusMode && !FOCUS_VIEWS.includes(view)) setView("insights");
   }, [focusMode, view, setView]);
@@ -71,12 +71,12 @@ export function Sidebar() {
 
         <div className="my-1 h-px w-6 bg-white/10" />
 
-        {/* Focus mode — strips the deck down to MBBS + Assistant */}
+        {/* Focus mode — strips the deck down to DevHub + Assistant */}
         <button
           type="button"
           onClick={() => updateSettings({ focusMode: !focusMode })}
           aria-pressed={focusMode}
-          title={focusMode ? "Exit focus mode" : "Focus mode — only MBBS & Assistant"}
+          title={focusMode ? "Exit focus mode" : "Focus mode — only DevHub & Assistant"}
           className={cn(
             "focus-ring grid h-11 w-11 place-items-center rounded-full border transition",
             focusMode

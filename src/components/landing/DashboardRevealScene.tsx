@@ -89,7 +89,7 @@ export function DashboardRevealScene() {
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
               {/* Mini sidebar representation */}
               <div className="hidden flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-2.5 lg:col-span-1 lg:flex">
-                {["Home", "Sparkles", "Stethoscope", "TrendingUp", "Youtube", "Dices", "Settings"].map((ic, i) => (
+                {["Home", "Sparkles", "Terminal", "TrendingUp", "Youtube", "Dices", "Settings"].map((ic, i) => (
                   <div
                     key={ic}
                     className={`grid h-8 w-8 place-items-center rounded-full transition-colors ${
@@ -137,8 +137,8 @@ export function DashboardRevealScene() {
                     </div>
                     <div className="space-y-2">
                       {[
-                        { text: "Review Phase II pharmacology notes", done: true, priority: "High" },
-                        { text: "Complete clinical case summary", done: false, priority: "High" },
+                        { text: "Review distributed consensus RFC", done: true, priority: "High" },
+                        { text: "Ship Redis caching layer & benchmarks", done: false, priority: "High" },
                         { text: "Check crypto portfolio & stocks", done: false, priority: "Normal" },
                       ].map((task, i) => (
                         <div

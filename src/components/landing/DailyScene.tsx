@@ -30,8 +30,8 @@ const WORLDS = [
 
           <div className="mt-4 space-y-2.5">
             {[
-              { title: "Review Phase II Pathology slide deck", tag: "MBBS", prio: "High", done: true },
-              { title: "Synthesize cardiology clinical case notes", tag: "Clinical", prio: "High", done: false },
+              { title: "Optimize distributed Redis cache layer", tag: "Backend", prio: "High", done: true },
+              { title: "Draft RFC for event-driven order pipeline", tag: "Architecture", prio: "High", done: false },
               { title: "Calibrate crypto stop-loss & equity holdings", tag: "Finance", prio: "Med", done: false },
               { title: "Hydration check: target 2.5L", tag: "Wellness", prio: "Normal", done: true },
             ].map((t, idx) => (
@@ -143,9 +143,9 @@ const WORLDS = [
 
           <div className="mt-4 space-y-3">
             {[
-              { name: "Morning Clinical Reading (30m)", streak: 14, days: [1, 1, 1, 1, 1, 1, 1] },
+              { name: "Daily LeetCode & Algorithms (45m)", streak: 14, days: [1, 1, 1, 1, 1, 1, 1] },
               { name: "Hydration Target 2.5 Liters", streak: 9, days: [1, 1, 1, 1, 1, 1, 0] },
-              { name: "Pharmacology Flashcard Recall", streak: 21, days: [1, 1, 1, 1, 1, 1, 1] },
+              { name: "System Design & RFC Reviews", streak: 21, days: [1, 1, 1, 1, 1, 1, 1] },
               { name: "Meditation & Breathwork", streak: 5, days: [1, 1, 0, 1, 1, 1, 0] },
             ].map((habit, idx) => (
               <div key={idx} className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
@@ -262,15 +262,15 @@ const WORLDS = [
             {/* Upcoming Agenda */}
             <div className="flex flex-col justify-between rounded-xl border border-white/10 bg-white/[0.02] p-3">
               <span className="font-mono text-[9px] text-zinc-400 uppercase">NEXT EVENT</span>
-              <div className="text-xs font-semibold text-white">Hospital Clinical Rounds</div>
-              <span className="font-mono text-[10px] text-zinc-400">11:30 AM · Ward 4B</span>
+              <div className="text-xs font-semibold text-white">Architecture Sync & PR Review</div>
+              <span className="font-mono text-[10px] text-zinc-400">11:30 AM · Google Meet</span>
             </div>
           </div>
 
           {/* Quick links summary */}
           <div className="mt-3 space-y-1.5">
             {[
-              { title: "PubMed Medical Library", url: "ncbi.nlm.nih.gov", icon: "BookOpen" },
+              { title: "GitHub Engineering Hub", url: "github.com", icon: "GitBranch" },
               { title: "CoinGecko Portfolio Live", url: "coingecko.com", icon: "TrendingUp" },
             ].map((link, idx) => (
               <div

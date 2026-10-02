@@ -123,9 +123,9 @@ export const useDeck = create<DeckState>()(
   persist(
     (set, get) => ({
       tasks: [
-        { id: "seed-t1", title: "Review medical study notes", done: false, priority: "high", createdAt: Date.now(), estimateMin: 60 },
+        { id: "seed-t1", title: "Review systems architecture RFC", done: false, priority: "high", createdAt: Date.now(), estimateMin: 60 },
         { id: "seed-t2", title: "Gym — push day", done: false, priority: "med", createdAt: Date.now(), estimateMin: 75 },
-        { id: "seed-t3", title: "Clear work inbox", done: false, priority: "med", createdAt: Date.now(), estimateMin: 30 },
+        { id: "seed-t3", title: "Clear engineering inbox", done: false, priority: "med", createdAt: Date.now(), estimateMin: 30 },
       ],
       habits: seededHabits,
       notes: "Welcome to Nucleus Deck.\n\nJot anything here — ideas, reminders, a brain-dump. Hit “Tidy” to let the assistant turn it into clean bullets.",

@@ -7,7 +7,7 @@ import { HomeView } from "@/components/views/HomeView";
 import { StudioView } from "@/components/views/StudioView";
 import { NewsView } from "@/components/views/NewsView";
 import { AssistantView } from "@/components/views/AssistantView";
-import { MbbsView } from "@/components/views/MbbsView";
+import { SoftwareView } from "@/components/views/SoftwareView";
 import { PlayView } from "@/components/views/PlayView";
 import { GamesView } from "@/components/views/GamesView";
 import { SettingsView } from "@/components/views/SettingsView";
@@ -29,7 +29,7 @@ export function Workspace() {
         {view === "studio" && <StudioView />}
         {view === "news" && <NewsView />}
         {view === "assistant" && <AssistantView />}
-        {view === "insights" && <MbbsView />}
+        {view === "insights" && <SoftwareView />}
         {view === "play" && <PlayView />}
         {view === "games" && <GamesView />}
         {view === "settings" && <SettingsView />}

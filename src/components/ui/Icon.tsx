@@ -15,6 +15,7 @@ import {
   Sun, Sunrise, Syringe, Target, Timer, TrendingUp, Trash2, User, Volume2, Wand2,
   WifiOff, Wind, X, Zap,
   ArrowUpDown, Bitcoin, Cherry, CircleDot, Clapperboard, Club, Coins, Diamond, Dices, Hash, Heart, LineChart, Mic, MicOff, Rocket, Spade, Triangle, TrendingDown, Trophy, Tv, VolumeX,
+  Code2, Terminal, Cpu, Database, Server, GitBranch, Layers, Binary, Boxes, Network, Braces, FileCode,
   type LucideProps,
 } from "lucide-react";
 
@@ -33,6 +34,7 @@ const registry = {
   Sun, Sunrise, Syringe, Target, Timer, TrendingUp, Trash2, User, Volume2, Wand2,
   WifiOff, Wind, X, Zap,
   ArrowUpDown, Bitcoin, Cherry, CircleDot, Clapperboard, Club, Coins, Diamond, Dices, Hash, Heart, LineChart, Mic, MicOff, Rocket, Spade, Triangle, TrendingDown, Trophy, Tv, VolumeX,
+  Code2, Terminal, Cpu, Database, Server, GitBranch, Layers, Binary, Boxes, Network, Braces, FileCode,
 };
 
 export type IconName = keyof typeof registry;

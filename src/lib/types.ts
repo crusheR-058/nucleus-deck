@@ -64,7 +64,7 @@ export interface Settings {
   theme: ThemePref;
   reduceMotion: "auto" | "on" | "off";
   webglBackground: boolean;
-  /** When on, the deck strips down to just the MBBS hub + Assistant. */
+  /** When on, the deck strips down to just the DevHub + Assistant. */
   focusMode: boolean;
   /** When on, the assistant speaks its replies aloud (Web Speech API). */
   voice: boolean;

@@ -9,9 +9,9 @@ const PROMPTS = [
   {
     id: "plan",
     label: "Plan my day",
-    userMsg: "Plan my day around clinical rounds at 11:30 AM.",
+    userMsg: "Plan my day around the system architecture sync at 11:30 AM.",
     aiReply:
-      "Good morning, Om. You have 3 high-priority tasks and clinical rounds at 11:30 AM in Ward 4B. I recommend completing your Phase II pharmacology review in your current focus block, taking a hydration break, and wrapping your case summary before lunch.",
+      "Good morning, Om. You have 3 high-priority tasks and the architecture sync at 11:30 AM. I recommend completing your distributed cache PR in your current focus block, testing your microservice endpoint, and wrapping your RFC review before lunch.",
     contextTags: ["Tasks: 3 pending", "Agenda: 11:30 AM", "Hydration: 84%"],
   },
   {
@@ -19,7 +19,7 @@ const PROMPTS = [
     label: "Spoken Daily Briefing",
     userMsg: "Play my morning audio briefing.",
     aiReply:
-      "Initiating voice synthesis. Current temperature is 24°C and clear. Today's primary objective: complete the cardiovascular pathology module. You're on a 14-day habit streak. Drink 400ml of water before heading out.",
+      "Initiating voice synthesis. Current temperature is 24°C and clear. Today's primary objective: complete the distributed consensus module and review PR #142. You're on a 14-day habit streak. Drink 400ml of water before heading out.",
     contextTags: ["Voice TTS: Active", "Weather: 24°C", "Habits: 14d streak"],
   },
   {
@@ -27,16 +27,16 @@ const PROMPTS = [
     label: "Tidy notes",
     userMsg: "Tidy and structure my scratchpad notes from last night.",
     aiReply:
-      "Done. I extracted 4 clinical pearls on acute coronary syndrome, formatted diagnostic criteria for STEMI vs NSTEMI into a clean table, and linked related PubMed references into your MBBS hub.",
-    contextTags: ["Notes: 4 categorized", "MBBS Hub: Linked", "Local storage"],
+      "Done. I extracted 4 system design patterns on distributed consensus (Raft vs Paxos), formatted quorum calculation criteria into a clean table, and linked related RFC references into your DevHub.",
+    contextTags: ["Notes: 4 categorized", "DevHub: Linked", "Local storage"],
   },
   {
     id: "summarize",
-    label: "Summarize clinical trial",
-    userMsg: "Summarize the latest NEJM cardiology study on SGLT2 inhibitors.",
+    label: "Analyze system architecture",
+    userMsg: "Analyze the architecture trade-offs between Kafka and RabbitMQ for our event pipeline.",
     aiReply:
-      "Key findings: Statistically significant 26% reduction in cardiovascular death and heart failure hospitalization. Well-tolerated across cohorts with preserved eGFR. Added to your study tracker.",
-    contextTags: ["Research: NEJM", "Key Metric: -26% risk", "Saved"],
+      "Key findings: Kafka provides partitioned distributed append-only log replay, ideal for high-throughput event streaming. RabbitMQ excels in complex AMQP routing and per-message ACKs. Added to DevHub.",
+    contextTags: ["Architecture: Distributed", "Trade-offs: Evaluated", "Saved"],
   },
 ];
 

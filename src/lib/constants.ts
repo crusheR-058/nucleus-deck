@@ -40,13 +40,13 @@ export const DEFAULT_QUICK_LINKS: QuickLink[] = [
   { id: "ql-whatsapp", label: "WhatsApp", url: "https://web.whatsapp.com", icon: "MessageCircle" },
   { id: "ql-calendar", label: "Calendar", url: "https://calendar.google.com", icon: "CalendarDays" },
   { id: "ql-drive", label: "Drive", url: "https://drive.google.com", icon: "HardDrive" },
-  { id: "ql-pubmed", label: "PubMed", url: "https://pubmed.ncbi.nlm.nih.gov", icon: "Stethoscope" },
+  { id: "ql-github", label: "GitHub", url: "https://github.com", icon: "GitBranch" },
 ];
 
 // ── Habits — seeded around what matters most in your day ──────
 export const DEFAULT_HABITS = [
   { name: "Gym / Train", icon: "Dumbbell" },
-  { name: "Study (medical)", icon: "Stethoscope" },
+  { name: "Code & Systems (Daily)", icon: "Terminal" },
   { name: "Deep work block", icon: "BrainCircuit" },
   { name: "Hydrate", icon: "Droplets" },
 ];
@@ -64,7 +64,7 @@ export const VIEWS: ViewMeta[] = [
   { key: "studio", label: "Studio", icon: "Youtube", hint: "YouTube search & recommendations" },
   { key: "news", label: "News", icon: "Newspaper", hint: "Tech news feed" },
   { key: "assistant", label: "Assistant", icon: "Sparkles", hint: "AI assistant" },
-  { key: "insights", label: "MBBS", icon: "Stethoscope", hint: "Your MBBS study hub" },
+  { key: "insights", label: "DevHub", icon: "Terminal", hint: "Software engineering & CS knowledge hub" },
   { key: "play", label: "Play", icon: "Clapperboard", hint: "Cricket, movies & markets" },
   { key: "games", label: "Games", icon: "Dices", hint: "Blackjack & roulette" },
   { key: "settings", label: "Settings", icon: "Settings2", hint: "Personalize the deck" },
@@ -73,7 +73,7 @@ export const VIEWS: ViewMeta[] = [
 // views shown in the bottom dock (segmented pill)
 export const DOCK_VIEWS: View[] = ["home", "studio", "news", "assistant", "insights"];
 
-// the only views reachable while Focus mode is on (MBBS hub + Assistant)
+// the only views reachable while Focus mode is on (DevHub + Assistant)
 export const FOCUS_VIEWS: View[] = ["insights", "assistant"];
 
 // ── News sections (NewsAPI category + Google News topic fallback) ─────

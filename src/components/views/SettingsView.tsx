@@ -74,7 +74,7 @@ export function SettingsView() {
           <Row label="3D crystal background" hint="WebGL refractions & particles (turn off for max performance)">
             <Toggle on={settings.webglBackground} onClick={() => updateSettings({ webglBackground: !settings.webglBackground })} />
           </Row>
-          <Row label="Focus mode" hint="Hide everything except the MBBS hub & Assistant">
+          <Row label="Focus mode" hint="Hide everything except DevHub & Assistant">
             <Toggle on={settings.focusMode} onClick={() => updateSettings({ focusMode: !settings.focusMode })} />
           </Row>
           <Row label="Assistant voice" hint="Speak replies aloud + enable the mic in chat">
