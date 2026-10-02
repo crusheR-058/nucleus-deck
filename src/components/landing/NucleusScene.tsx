@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { SYSTEM_NODES, type SystemNode } from "./types";
 import { NucleusMark } from "@/components/ui/NucleusMark";
 import { Icon } from "@/components/ui/Icon";
 import { usePrefersReducedMotion } from "@/lib/hooks";
-import { playHoverTick, playGlassClick } from "@/lib/sound";
+import { playHoverTick } from "@/lib/sound";
 
 export function NucleusScene() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -19,10 +19,9 @@ export function NucleusScene() {
   });
 
   // Scene transforms driven by scroll progress [0 -> 1]
-  const nucleusScale = useTransform(scrollYProgress, [0, 0.4, 0.8, 1], [0.95, 1.35, 1.2, 1.05]);
-  const expansionProgress = useTransform(scrollYProgress, [0, 0.55, 1], [0.6, 1.0, 1.18]);
-  const linesOpacity = useTransform(scrollYProgress, [0, 0.25], [0.45, 0.9]);
-  const nodesOpacity = useTransform(scrollYProgress, [0, 0.2], [0.75, 1]);
+  const nucleusScale = useTransform(scrollYProgress, [0, 0.35, 0.7, 1], [0.95, 1.25, 1.15, 1.05]);
+  // Expansion starts at 0 (inside nucleus) and expands out to full orbit
+  const expansionProgress = useTransform(scrollYProgress, [0.04, 0.52, 1], [0, 1.0, 1.15]);
   const headlineOpacity = useTransform(scrollYProgress, [0, 0.25, 0.8, 1], [1, 0.85, 0.6, 0.2]);
 
   return (
@@ -63,9 +62,8 @@ export function NucleusScene() {
             </div>
           </motion.div>
 
-          {/* SVG Animated Connector Filaments (Reference Video inspired) */}
-          <motion.svg
-            style={{ opacity: reduced ? 0.7 : linesOpacity }}
+          {/* SVG Animated Connector Filaments: Emerges fully from inside the Nucleus core (600, 380) */}
+          <svg
             className="pointer-events-none absolute inset-0 h-full w-full"
             viewBox="0 0 1200 760"
             fill="none"
@@ -78,46 +76,19 @@ export function NucleusScene() {
               </linearGradient>
             </defs>
 
-            {SYSTEM_NODES.map((node) => {
-              // Convert polar to cartesian coordinates centered at (600, 380)
-              const rad = (node.angle * Math.PI) / 180;
-              // Base radius responsive to expansion
-              const r = node.distance * 0.95;
-              const targetX = 600 + Math.cos(rad) * r;
-              const targetY = 380 + Math.sin(rad) * r * 0.7; // slight elliptical perspective
-              const isActive = activeNode === node.id;
+            {SYSTEM_NODES.map((node) => (
+              <BranchConnector
+                key={`branch-${node.id}`}
+                node={node}
+                isActive={activeNode === node.id}
+                scrollYProgress={scrollYProgress}
+                reduced={reduced}
+              />
+            ))}
+          </svg>
 
-              // Quadratic bezier control point creating organic curved filaments
-              const midX = 600 + Math.cos(rad - 0.2) * (r * 0.45);
-              const midY = 380 + Math.sin(rad - 0.2) * (r * 0.45 * 0.7);
-
-              return (
-                <g key={node.id}>
-                  <path
-                    d={`M 600 380 Q ${midX} ${midY} ${targetX} ${targetY}`}
-                    stroke={isActive ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.18)"}
-                    strokeWidth={isActive ? 1.75 : 1}
-                    strokeDasharray={isActive ? "none" : "3 5"}
-                    className="transition-all duration-300"
-                  />
-                  {/* Glowing connector junction dot */}
-                  <circle
-                    cx={targetX}
-                    cy={targetY}
-                    r={isActive ? 3.5 : 2}
-                    fill={isActive ? "#ffffff" : "rgba(255,255,255,0.5)"}
-                    className="transition-all duration-300"
-                  />
-                </g>
-              );
-            })}
-          </motion.svg>
-
-          {/* Floating Spatial Nodes orbiting the Nucleus */}
-          <motion.div
-            style={{ opacity: nodesOpacity }}
-            className="pointer-events-auto absolute inset-0"
-          >
+          {/* Floating Spatial Nodes: Pops out fully from inside the Nucleus core */}
+          <div className="pointer-events-auto absolute inset-0">
             {SYSTEM_NODES.map((node) => {
               const rad = (node.angle * Math.PI) / 180;
               const baseDist = node.distance * 0.95;
@@ -125,18 +96,19 @@ export function NucleusScene() {
 
               return (
                 <FloatingNodeItem
-                  key={node.id}
+                  key={`node-${node.id}`}
                   node={node}
                   angleRad={rad}
                   baseDistance={baseDist}
                   expansionProgress={expansionProgress}
+                  scrollYProgress={scrollYProgress}
                   reduced={reduced}
                   isActive={isActive}
                   onHover={(active) => setActiveNode(active ? node.id : null)}
                 />
               );
             })}
-          </motion.div>
+          </div>
         </div>
 
         {/* Ambient bottom status strip */}
@@ -155,11 +127,83 @@ export function NucleusScene() {
   );
 }
 
+/**
+ * Animated filament branch that traces out organically from inside the Nucleus center (600, 380)
+ * out to each constellation orbital coordinate.
+ */
+function BranchConnector({
+  node,
+  isActive,
+  scrollYProgress,
+  reduced,
+}: {
+  node: SystemNode;
+  isActive: boolean;
+  scrollYProgress: MotionValue<number>;
+  reduced: boolean;
+}) {
+  const rad = (node.angle * Math.PI) / 180;
+  const r = node.distance * 0.95;
+  const targetX = 600 + Math.cos(rad) * r;
+  const targetY = 380 + Math.sin(rad) * r * 0.7; // elliptical perspective
+
+  // Quadratic bezier control point for organic curvature
+  const midX = 600 + Math.cos(rad - 0.2) * (r * 0.45);
+  const midY = 380 + Math.sin(rad - 0.2) * (r * 0.45 * 0.7);
+
+  // Stagger emergence by node order
+  const nodeIndex = parseInt(node.code.replace("#", ""), 10) - 1;
+  const staggerOffset = Math.max(0, nodeIndex) * 0.015;
+  const start = 0.04 + staggerOffset;
+  const end = Math.min(0.52, 0.28 + staggerOffset * 1.5);
+
+  const pathLength = useTransform(scrollYProgress, [start, end], [0, 1]);
+  const branchOpacity = useTransform(
+    scrollYProgress,
+    [start, start + 0.04, 0.75, 1],
+    [0, 1, 0.9, 0.4]
+  );
+  const dotScale = useTransform(scrollYProgress, [end - 0.04, end], [0, 1]);
+
+  return (
+    <g>
+      <motion.path
+        d={`M 600 380 Q ${midX} ${midY} ${targetX} ${targetY}`}
+        stroke={isActive ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.22)"}
+        strokeWidth={isActive ? 1.75 : 1}
+        strokeDasharray={isActive ? "none" : "3 5"}
+        style={{
+          pathLength: reduced ? 1 : pathLength,
+          opacity: reduced ? 0.7 : branchOpacity,
+        }}
+        className="transition-all duration-300"
+      />
+      {/* Glowing connector junction dot at branch tip */}
+      <motion.circle
+        cx={targetX}
+        cy={targetY}
+        r={isActive ? 3.5 : 2}
+        fill={isActive ? "#ffffff" : "rgba(255,255,255,0.6)"}
+        style={{
+          scale: reduced ? 1 : dotScale,
+          opacity: reduced ? 0.8 : dotScale,
+        }}
+        className="transition-all duration-300"
+      />
+    </g>
+  );
+}
+
+/**
+ * Floating node item that scales and pops out from inside the Nucleus core (center 50%, 50%)
+ * as the user scrolls, traveling to its designated orbital position.
+ */
 function FloatingNodeItem({
   node,
   angleRad,
   baseDistance,
   expansionProgress,
+  scrollYProgress,
   reduced,
   isActive,
   onHover,
@@ -167,15 +211,32 @@ function FloatingNodeItem({
   node: SystemNode;
   angleRad: number;
   baseDistance: number;
-  expansionProgress: any;
+  expansionProgress: MotionValue<number>;
+  scrollYProgress: MotionValue<number>;
   reduced: boolean;
   isActive: boolean;
   onHover: (active: boolean) => void;
 }) {
-  // Parallax factor based on node.zDepth: positive depth expands slightly further
   const depthFactor = 1 + (node.zDepth || 0) / 250;
 
-  // Compute position relative to center (50%, 50%)
+  // Staggered emergence & pop timing
+  const nodeIndex = parseInt(node.code.replace("#", ""), 10) - 1;
+  const staggerOffset = Math.max(0, nodeIndex) * 0.015;
+  const start = 0.04 + staggerOffset;
+  const popEnd = Math.min(0.44, 0.22 + staggerOffset * 1.5);
+
+  const nodeScale = useTransform(
+    scrollYProgress,
+    [start, popEnd, 0.85, 1],
+    [0, 1, 1, 0.96]
+  );
+  const nodeOpacity = useTransform(
+    scrollYProgress,
+    [start, start + 0.05, 0.85, 1],
+    [0, 1, 1, 0.7]
+  );
+
+  // Compute position relative to center (50%, 50%) - when expansion is 0, node sits inside the core
   const x = useTransform(
     expansionProgress,
     (p: number) => Math.cos(angleRad) * baseDistance * (reduced ? 1 : p) * depthFactor
@@ -192,11 +253,13 @@ function FloatingNodeItem({
         top: "50%",
         x,
         y,
+        scale: reduced ? 1 : nodeScale,
+        opacity: reduced ? 1 : nodeOpacity,
         translateX: "-50%",
         translateY: "-50%",
-        willChange: "transform",
+        willChange: "transform, opacity",
       }}
-      className="absolute cursor-pointer transition-transform duration-300"
+      className="absolute cursor-pointer"
       onPointerEnter={() => {
         playHoverTick();
         onHover(true);

@@ -33,12 +33,13 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(function Gla
   // Depth/parallax is carried by the background crystal layer instead; cards
   // animate only on entrance + hover, which settle on integer transforms.
   return (
-    <div className="h-full w-full">
+    <div className={cn("w-full", className?.includes("h-full") ? "h-full" : "")}>
       <motion.div
         ref={ref}
         className={cn(
           variant === "charcoal" ? "glass-charcoal" : "glass",
-          "relative h-full overflow-hidden",
+          "relative overflow-hidden",
+          className?.includes("h-full") && "h-full",
           padded && "p-5 sm:p-6",
           className,
         )}

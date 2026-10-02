@@ -420,7 +420,7 @@ export function SoftwareView() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 items-start">
         {/* Architecture & Design Heuristics */}
         <GlassCard depth={2} delay={0.15}>
           <CardHeader iconName="Layers" eyebrow="Architectural Heuristics" title="Core System Design Principles" />
